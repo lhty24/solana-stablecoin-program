@@ -33,5 +33,10 @@ pub struct InitializeConfig<'info> {
 }
 
 pub fn process_initialize_config(ctx: Context<InitializeConfig>) -> Result<()> {
+    *ctx.accounts.config_account = Config {
+        authority: ctx.accounts.authority.key(),
+        mint_account: ctx.accounts.mint_account.key(),
+    }
+
     OK(())
 }
