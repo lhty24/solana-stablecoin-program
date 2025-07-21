@@ -1,6 +1,9 @@
 use anchor_lang::prelude::*;
 
-use crate::{Config, MINT_DECIMALS, SEED_CONFIG_ACCOUNT, SEED_MINT_ACCOUNT};
+use crate::{
+    Config, LIQUIDATION_BONUS, LIQUIDATION_THRESHOLD, MINT_DECIMALS, MIN_HEALTH_FACTOR,
+    SEED_CONFIG_ACCOUNT, SEED_MINT_ACCOUNT,
+};
 use anchor_spl::token_interface::{Mint, Token2022};
 
 #[derive(Accounts)]
@@ -36,7 +39,12 @@ pub fn process_initialize_config(ctx: Context<InitializeConfig>) -> Result<()> {
     *ctx.accounts.config_account = Config {
         authority: ctx.accounts.authority.key(),
         mint_account: ctx.accounts.mint_account.key(),
-    }
+        liquidation_threshold: LIQUIDATION_THRESHOLD,
+        liquidation_bonus: LIQUIDATION_BONUS,
+        min_health_factor: MIN_HEALTH_FACTOR,
+        bump: ctx.bumps.config_account,
+        bump_mint_account: ctx.bumps.mint_account,
+    };
 
     OK(())
 }

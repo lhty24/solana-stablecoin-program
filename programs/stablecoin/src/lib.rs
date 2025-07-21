@@ -13,11 +13,11 @@ declare_id!("31jJwhAZtp87oh3qHX9oczb1o2nncRJqkQru1UDUzJT1");
 pub mod stablecoin {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
-        Ok(())
+    pub fn initialize_config(ctx: Context<InitializedConfig>) -> Result<()> {
+        process_initialize_config(ctx)
+    }
+
+    pub fn update_config(ctx: Context<UpdateConfig>, min_health_factor: u64) -> Result<()> {
+        process_update_config(ctx, min_health_factor)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
