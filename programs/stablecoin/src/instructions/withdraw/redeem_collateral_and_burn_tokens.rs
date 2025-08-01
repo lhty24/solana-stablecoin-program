@@ -1,4 +1,7 @@
-use crate::{Collateral, Config, SEED_COLLATERAL_ACCOUNT, SEED_CONFIG_ACCOUNT};
+use crate::{
+    instructions::check_health_factor, Collateral, Config, SEED_COLLATERAL_ACCOUNT,
+    SEED_CONFIG_ACCOUNT,
+};
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, Token2022, TokenAccount};
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
@@ -37,4 +40,22 @@ pub struct RedeemCollateralAndBurnTokens<'info> {
 
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token2022>,
+}
+
+pub fn process_redeem_collateral_and_redeem_tokens(
+    ctx: Context<RedeemCollateralAndBurnTokens>,
+    amount_collateral: u64,
+    amount_to_burn: u64,
+) -> Result<()> {
+    let collateral_account = &mut ctx.accounts.collateral_account;
+    collateral_account.lamport_balance = ctx.accounts.sol_account.lamports() - amount_collateral;
+    collateral_account.amount_minted -= amount_to_burn;
+
+    check_health_factor(
+        &ctx.accounts.collateral_account,
+        &ctx.accounts.config_account,
+        &ctx.accounts.price_update,
+    )?;
+
+    Ok(())
 }
