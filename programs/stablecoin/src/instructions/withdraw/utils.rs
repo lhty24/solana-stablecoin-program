@@ -35,6 +35,7 @@ pub fn burn_tokens<'info>(
     mint_account: &InterfaceAccount<'info, Mint>,
     token_account: &InterfaceAccount<'info, TokenAccount>,
     authority: &Signer<'info>,
+    amount: u64,
 ) -> Result<()> {
     burn(
         CpiContext::new(
